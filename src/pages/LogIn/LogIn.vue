@@ -14,11 +14,49 @@ const userProfile = ref(null);
 const school = ref(""); // Store school input
 const showSchoolForm = ref(false); // Control form visibility
 const router = useRouter();
+var OAuthResponse = ref(null);
 
 onMounted(() => {
     const session = Cookies.get("audemyUserSession");
     if (session) {
-        userSession.value = JSON.parse(session);
+        const parsed = JSON.parse(session);
+        // console.log("Parsed session:", parsed);
+
+        let token = parsed.token || parsed; // Check if parsed is an object with a token or just the token itself.
+
+        if (typeof token === "string") {
+            try {
+                const decoded = jwtDecode(token); // Decode the token only if it's a string
+                const currentTime = Math.floor(Date.now() / 1000);
+
+                const toEST = (unix) =>
+                    new Date(unix * 1000).toLocaleString("en-US", {
+                        timeZone: "America/New_York",
+                        hour12: false,
+                    });
+
+                console.log("Current Time (EST):", toEST(currentTime));
+                console.log("Expiry Time (EST):", toEST(decoded.exp));
+
+                if (decoded.exp < currentTime) {
+                    Cookies.remove("audemyUserSession");
+                    userSession.value = null;
+                    router.push("/login");
+                } else {
+                    userSession.value = parsed;
+                }
+            } catch (error) {
+                console.error("Error decoding token:", error);
+                Cookies.remove("audemyUserSession");
+                userSession.value = null;
+                router.push("/login");
+            }
+        } else {
+            console.error("Invalid token format:", token);
+            Cookies.remove("audemyUserSession");
+            userSession.value = null;
+            router.push("/login");
+        }
     }
 });
 
@@ -56,15 +94,17 @@ const login = async (event) => {
         Cookies.set(
             "audemyUserSession",
             JSON.stringify({ token: authKey.value, user: data.user }),
-            { expires: 7 }
+            { expires: 7 } // Set cookie with token and user data
         );
         userSession.value = { token: authKey.value, user: data.user };
+        // router.push("/game-zone");
     } catch (error) {
         console.error("Error:", error);
     }
 };
 
 const callback = async (response) => {
+    OAuthResponse = response.credential;
     if (response?.credential) {
         try {
             const decoded = jwtDecode(response.credential);
@@ -93,10 +133,21 @@ const callback = async (response) => {
         console.log("User not found, prompting for school...");
         showSchoolForm.value = true;
     } else {
-        Cookies.set("audemyUserSession", JSON.stringify(response), {
-            expires: 7,
-        });
-        userSession.value = response;
+        Cookies.set(
+            "audemyUserSession",
+            JSON.stringify({
+                token: OAuthResponse,
+                user: userProfile.value,
+            }),
+            {
+                expires: 7,
+            }
+        );
+        userSession.value = {
+            token: OAuthResponse,
+            user: userProfile.value,
+        };
+
         router.push("/game-zone");
     }
 };
@@ -124,10 +175,18 @@ const updateSchool = async () => {
         if (data.success) {
             Cookies.set(
                 "audemyUserSession",
-                JSON.stringify(userProfile.value),
-                { expires: 7 }
+                JSON.stringify({
+                    token: OAuthResponse,
+                    user: userProfile.value,
+                }),
+                {
+                    expires: 7,
+                }
             );
-            userSession.value = userProfile.value;
+            userSession.value = {
+                token: OAuthResponse,
+                user: userProfile.value,
+            };
             showSchoolForm.value = false;
             router.push("/game-zone");
         }
@@ -238,7 +297,9 @@ const logout = () => {
                         />
                     </div>
                     <div class="flex justify-end w-full">
-                        <a href="#" class="underline text-[#087BB4] font-medium"
+                        <a
+                            href="./forgot-password"
+                            class="underline text-[#087BB4] font-medium"
                             >Forgot password?</a
                         >
                     </div>
