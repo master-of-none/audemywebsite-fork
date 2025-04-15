@@ -455,29 +455,33 @@ const toggleRecording = () => {
 
       const finalTranscript = transcription.value;
 
-      if (currentQuestion.value) {
-        console.log("Question is: ", currentQuestion.value["Q"]);
-        console.log("User Answer:", finalTranscript);
-        console.log("Correct Answer:", currentQuestion.value["A"]);
+      // Process the answer
+      const question = questionsDb[randQueNum[numOfAudiosPlayed.value]];
+      console.log("Question is: ", question["Q"]);
+      console.log("User Answer:", finalTranscript);
+      console.log("Correct Answer:", question["A"]);
 
-        if (
-          currentQuestion.value["A"].some((answer) =>
-            finalTranscript.trim().toLowerCase().includes(answer.toLowerCase())
-          )
-        ) {
-          score.value++;
-          console.log("Correct Answer!");
-          playSound("correctaudio.mp3");
-        } else {
-          console.log("Wrong Answer!");
-          const incorrectAudio =
-            "The correct answer is " + currentQuestion.value["A"][0];
-          playSound("incorrectaudio.mp3");
+      const userWords = finalTranscript
+      .toLowerCase()
+      .replace(/[.,!?]/g, "")
+      .split(/\s+/);
 
-          setTimeout(() => {
-            currentAudios.push(playQuestion(incorrectAudio));
-          }, 1000);
-        }
+      const correctAnswers = Array.isArray(question["A"])
+        ? question["A"].map((a) => a.toLowerCase())
+        : [question["A"].toLowerCase()];
+
+      if (userWords.some((word) => correctAnswers.includes(word))){
+        score.value++;
+        console.log("Correct Answer!");
+        playSound("correctaudio.mp3");
+      } else {
+        console.log("Wrong Answer!");
+        playSound("incorrectaudio.mp3");
+        const incorectAudio = "The correct answer is " + question["A"][0];
+
+        setTimeout(() => {
+          currentAudios.push(playQuestion(incorectAudio));
+        }, 1000);
       }
 
       stopListening();
