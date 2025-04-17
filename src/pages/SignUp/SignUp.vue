@@ -8,6 +8,7 @@ const password = ref('');
 const confirmPassword = ref('');
 const confirmTouched = ref(false);
 const formSubmitted = ref(false);
+const debugMessage = ref("Please confirm your password");
 
 import Group1010 from "/assets/images/SignUpImg/Group 1010.png";
 import Group878 from "/assets/images/SignUpImg/Group 878.png";
@@ -125,7 +126,7 @@ const validatePasswords = () => {
         debugMessage.value = "Please confirm your password";
     }
     
-    console.log("passwordsMatch after:", passwordsMatch.value);
+    // console.log("passwordsMatch after:", passwordsMatch.value);
 };
 
 const handleConfirmBlur = () => {
