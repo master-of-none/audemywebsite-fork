@@ -1,189 +1,3 @@
-<script setup>
-import { ref, watch, onMounted, computed } from "vue";
-
-const signupForm = ref(null);
-const passwordsMatch = ref(false);
-const showFeedback = ref(true);
-const password = ref('');
-const confirmPassword = ref('');
-const confirmTouched = ref(false);
-const formSubmitted = ref(false);
-const debugMessage = ref("Please confirm your password");
-
-import Group1010 from "/assets/images/SignUpImg/Group 1010.png";
-import Group878 from "/assets/images/SignUpImg/Group 878.png";
-import OrangeStar from "/assets/images/SignUpImg/Group 895.png";
-import Book from "/assets/images/SignUpImg/Group 1106.png";
-import Star from "/assets/images/testimonials/star.svg";
-
-import Cookies from "js-cookie";
-const submitForm = async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
-    
-    // Set formSubmitted to true
-    formSubmitted.value = true;
-    
-    // Force validation check before submission
-    validatePasswords();
-  
-    // Check if passwords match
-    if (!passwordsMatch.value) {
-        debugMessage.value = "Form submission stopped: passwords don't match";
-        return;
-    }
-  
-    try {
-        const response = await fetch("/api/auth/signup", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                user: {
-                    first_name: signupForm.value.first_name.value,
-                    last_name: signupForm.value.last_name.value,
-                    // birthday: signupForm.value.birthday.value,
-                    school_name: signupForm.value.school_name.value,
-                    email: signupForm.value.email.value,
-                    password: signupForm.value.password.value,
-                    confirm_password: signupForm.value.confirm_password.value,
-                },
-            }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || "Something went wrong");
-        }
-
-        console.log("Success:", data);
-        //! Go To login
-        console.log("Signup Successful", data);
-
-        const loginResponse = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                user: {
-                    email: signupForm.value.email.value,
-                    password: signupForm.value.password.value,
-                },
-            }),
-        });
-        const loginData = await loginResponse.json();
-        if (!loginResponse.ok) {
-            throw new Error(loginData.error || "Something went wrong");
-        }
-        console.log("Login Successful", loginData);
-
-        if (loginData.token) {
-            Cookies.set("audemyUserSession", JSON.stringify(loginData.token), {
-                expires: 7, // Set the cookie to expire in 7 days
-                secure: true,
-            });
-            window.location.href = "/game-zone";
-        } else {
-            throw new Error("Token not found");
-        }
-        signupForm.value?.reset?.();
-
-        // Handle success (e.g., redirect, show success message)
-    } catch (error) {
-        console.error("Error:", error.message);
-        // Handle error (e.g., show error message to the user)
-    }
-};
-
-const validatePasswords = () => {
-    
-    // Always show feedback
-    showFeedback.value = true;
-    
-    if (password.value && confirmPassword.value) {
-        // Both fields have values, set match status
-        passwordsMatch.value = password.value === confirmPassword.value;
-        debugMessage.value = passwordsMatch.value
-            ? "Passwords are a match."
-            : "Passwords do not match.";
-    } else if (confirmTouched.value && confirmPassword.value === '') {
-        // If user has interacted with confirm field but it's now empty
-        passwordsMatch.value = false;
-        debugMessage.value = "Please confirm your password";
-    } else if (formSubmitted.value) {
-        // If form was submitted but confirm password is empty
-        passwordsMatch.value = false; 
-        debugMessage.value = "Please confirm your password";
-    } else if (confirmPassword.value) {
-        // Confirm password has a value but doesn't match
-        passwordsMatch.value = false;
-        debugMessage.value = "Passwords do not match.";
-    } else {
-        // Confirm password is empty and never touched
-        passwordsMatch.value = null;
-        debugMessage.value = "Please confirm your password";
-    }
-    
-    // console.log("passwordsMatch after:", passwordsMatch.value);
-};
-
-const handleConfirmBlur = () => {
-    confirmTouched.value = true;
-    validatePasswords();
-};
-
-onMounted(() => {
-    // Force feedback to show for debugging
-    showFeedback.value = true;
-    validatePasswords();
-});
-
-// Watch both password fields for changes
-watch(password, () => {
-    validatePasswords();
-});
-
-watch(confirmPassword, () => {
-    validatePasswords();
-});
-
-// Reset formSubmitted when either password changes
-watch([password, confirmPassword], () => {
-    // Reset formSubmitted whenever either password changes after form submission
-    if (formSubmitted.value) {
-        formSubmitted.value = false;
-    }
-    
-    // If user is typing in confirm field, mark it as touched
-    if (confirmPassword.value) {
-        confirmTouched.value = true;
-    }
-});
-
-const feedbackMessage = computed(() => {
-    if (passwordsMatch.value === true) {
-        return "Yeye! Passwords are a match!";
-    } else if (passwordsMatch.value === false) {
-        return "Oops! Passwords do not match. Please Try again.";
-    } else {
-        return "Please confirm your password";
-    }
-});
-
-const feedbackClass = computed(() => {
-    if (passwordsMatch.value === true) {
-        return "bg-green-100 border-green-500 text-green-800";
-    } else if (passwordsMatch.value === false) {
-        return "bg-red-100 border-red-500 text-red-800";
-    } else {
-        return "bg-gray-100 border-gray-400 text-gray-800";
-    }
-});
-
-</script>
-
 <template>
     <div
         class="w-full min-h-screen overflow-auto flex justify-between gap-[98px] font-poppins mobile:flex-col mobile:gap-[20px]"
@@ -306,21 +120,21 @@ const feedbackClass = computed(() => {
                     />
                 </div>
 
-                 <!-- EMAIL FIELD -->
-                 <div class="mb-[16px] mobile:w-full">
-                     <label
-                         class="block text-[#0C0D0D] font-semiBold"
-                         for="email"
-                         >Email</label
-                     >
-                     <input
-                         type="email"
-                         class="w-full outline-none border border-black h-[48px] px-4 rounded-[8px]"
-                         id="email"
-                         name="email"
-                         placeholder="Enter your email address"
-                     />
-                 </div>
+                <!-- EMAIL FIELD -->
+                <div class="mb-[16px] mobile:w-full">
+                    <label
+                        class="block text-[#0C0D0D] font-semiBold"
+                        for="email"
+                        >Email</label
+                    >
+                    <input
+                        type="email"
+                        class="w-full outline-none border border-black h-[48px] px-4 rounded-[8px]"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                    />
+                </div>
 
                 <!-- PASSWORD FIELD -->
                 <div class="mb-[16px] mobile:w-full">
@@ -356,11 +170,12 @@ const feedbackClass = computed(() => {
                         placeholder="Confirm your password"
                         @input="validatePasswords"
                         @blur="handleConfirmBlur"
-                    />                   
+                    />
                 </div>
-                
+
                 <!-- Password match feedback container (Using computed properties) -->
-                <div v-show="confirmTouched"
+                <div
+                    v-show="confirmTouched"
                     class="mb-6 p-3 rounded-lg border-2 shadow-md min-h-[56px] text-base font-medium"
                     :class="feedbackClass"
                 >
@@ -393,3 +208,187 @@ const feedbackClass = computed(() => {
         </div>
     </div>
 </template>
+
+<script setup>
+import { ref, watch, onMounted, computed } from "vue";
+
+const signupForm = ref(null);
+const passwordsMatch = ref(false);
+const showFeedback = ref(true);
+const password = ref("");
+const confirmPassword = ref("");
+const confirmTouched = ref(false);
+const formSubmitted = ref(false);
+const debugMessage = ref("Please confirm your password");
+
+import Group1010 from "/assets/images/SignUpImg/Group 1010.png";
+import Group878 from "/assets/images/SignUpImg/Group 878.png";
+import OrangeStar from "/assets/images/SignUpImg/Group 895.png";
+import Book from "/assets/images/SignUpImg/Group 1106.png";
+import Star from "/assets/images/testimonials/star.svg";
+
+import Cookies from "js-cookie";
+const submitForm = async (event) => {
+    event.preventDefault(); // Prevent default form submission behavior
+
+    // Set formSubmitted to true
+    formSubmitted.value = true;
+
+    // Force validation check before submission
+    validatePasswords();
+
+    // Check if passwords match
+    if (!passwordsMatch.value) {
+        debugMessage.value = "Form submission stopped: passwords don't match";
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/auth/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                user: {
+                    first_name: signupForm.value.first_name.value,
+                    last_name: signupForm.value.last_name.value,
+                    // birthday: signupForm.value.birthday.value,
+                    school_name: signupForm.value.school_name.value,
+                    email: signupForm.value.email.value,
+                    password: signupForm.value.password.value,
+                    confirm_password: signupForm.value.confirm_password.value,
+                },
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Something went wrong");
+        }
+
+        console.log("Success:", data);
+        //! Go To login
+        console.log("Signup Successful", data);
+
+        const loginResponse = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                user: {
+                    email: signupForm.value.email.value,
+                    password: signupForm.value.password.value,
+                },
+            }),
+        });
+        const loginData = await loginResponse.json();
+        if (!loginResponse.ok) {
+            throw new Error(loginData.error || "Something went wrong");
+        }
+        console.log("Login Successful", loginData);
+
+        if (loginData.token) {
+            Cookies.set("audemyUserSession", JSON.stringify(loginData.token), {
+                expires: 7, // Set the cookie to expire in 7 days
+                secure: true,
+            });
+            window.location.href = "/game-zone";
+        } else {
+            throw new Error("Token not found");
+        }
+        signupForm.value?.reset?.();
+
+        // Handle success (e.g., redirect, show success message)
+    } catch (error) {
+        console.error("Error:", error.message);
+        // Handle error (e.g., show error message to the user)
+    }
+};
+
+const validatePasswords = () => {
+    // Always show feedback
+    showFeedback.value = true;
+
+    if (password.value && confirmPassword.value) {
+        // Both fields have values, set match status
+        passwordsMatch.value = password.value === confirmPassword.value;
+        debugMessage.value = passwordsMatch.value
+            ? "Passwords are a match."
+            : "Passwords do not match.";
+    } else if (confirmTouched.value && confirmPassword.value === "") {
+        // If user has interacted with confirm field but it's now empty
+        passwordsMatch.value = false;
+        debugMessage.value = "Please confirm your password";
+    } else if (formSubmitted.value) {
+        // If form was submitted but confirm password is empty
+        passwordsMatch.value = false;
+        debugMessage.value = "Please confirm your password";
+    } else if (confirmPassword.value) {
+        // Confirm password has a value but doesn't match
+        passwordsMatch.value = false;
+        debugMessage.value = "Passwords do not match.";
+    } else {
+        // Confirm password is empty and never touched
+        passwordsMatch.value = null;
+        debugMessage.value = "Please confirm your password";
+    }
+
+    // console.log("passwordsMatch after:", passwordsMatch.value);
+};
+
+const handleConfirmBlur = () => {
+    confirmTouched.value = true;
+    validatePasswords();
+};
+
+onMounted(() => {
+    // Force feedback to show for debugging
+    showFeedback.value = true;
+    validatePasswords();
+});
+
+// Watch both password fields for changes
+watch(password, () => {
+    validatePasswords();
+});
+
+watch(confirmPassword, () => {
+    validatePasswords();
+});
+
+// Reset formSubmitted when either password changes
+watch([password, confirmPassword], () => {
+    // Reset formSubmitted whenever either password changes after form submission
+    if (formSubmitted.value) {
+        formSubmitted.value = false;
+    }
+
+    // If user is typing in confirm field, mark it as touched
+    if (confirmPassword.value) {
+        confirmTouched.value = true;
+    }
+});
+
+const feedbackMessage = computed(() => {
+    if (passwordsMatch.value === true) {
+        return "Yeye! Passwords are a match!";
+    } else if (passwordsMatch.value === false) {
+        return "Oops! Passwords do not match. Please Try again.";
+    } else {
+        return "Please confirm your password";
+    }
+});
+
+const feedbackClass = computed(() => {
+    if (passwordsMatch.value === true) {
+        return "bg-green-100 border-green-500 text-green-800";
+    } else if (passwordsMatch.value === false) {
+        return "bg-red-100 border-red-500 text-red-800";
+    } else {
+        return "bg-gray-100 border-gray-400 text-gray-800";
+    }
+});
+</script>
