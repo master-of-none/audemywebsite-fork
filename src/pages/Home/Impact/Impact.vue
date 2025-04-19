@@ -40,7 +40,7 @@ import Globe from "/assets/images/impact/globe 1.svg";
                     <h1
                         class="font-poppins font-medium text-2xl text-wrap mobile:text-[24px]"
                     >
-                        5.000+
+                        5,000+
                     </h1>
                     <p
                         class="font-poppins text-base text-center mobile:text-[12px]"
@@ -59,7 +59,7 @@ import Globe from "/assets/images/impact/globe 1.svg";
                     <h1
                         class="font-poppins font-medium text-2xl text-wrap mobile:text-[24px]"
                     >
-                        100.000+
+                        100,000+
                     </h1>
                     <p
                         class="font-poppins text-base text-center mobile:text-[12px]"
