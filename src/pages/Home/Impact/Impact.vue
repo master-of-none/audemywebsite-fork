@@ -20,8 +20,7 @@ import Globe from "/assets/images/impact/globe 1.svg";
             <p
                 class="font-poppins text-body text-xl leading-8 text-wrap max-w-[65%] tablet:max-w-[85%] mobile:text-[16px] mobile:text-center mobile:max-w-full"
             >
-                Bridging the educational gap for visually impaired learners with
-                interactive audio learning.
+            Did you know that over 70% of blind students are at least a grade level behind in school due to a lack of resources? We are bridging the educational gap for visually impaired learners with interactive audio learning.
             </p>
             <a
                 href="/impact"
@@ -41,13 +40,13 @@ import Globe from "/assets/images/impact/globe 1.svg";
                     <h1
                         class="font-poppins font-medium text-2xl text-wrap mobile:text-[24px]"
                     >
-                        1000+
+                        5.000+
                     </h1>
                     <p
                         class="font-poppins text-base text-center mobile:text-[12px]"
                     >
-                        students <br />
-                        impacted
+                        blind and visually impaired <br>
+                        students impacted
                     </p>
                 </div>
             </div>
@@ -60,12 +59,12 @@ import Globe from "/assets/images/impact/globe 1.svg";
                     <h1
                         class="font-poppins font-medium text-2xl text-wrap mobile:text-[24px]"
                     >
-                        20000+
+                        100.000+
                     </h1>
                     <p
                         class="font-poppins text-base text-center mobile:text-[12px]"
                     >
-                        problems <br />
+                        educational problems <br />
                         solved
                     </p>
                 </div>
@@ -79,12 +78,12 @@ import Globe from "/assets/images/impact/globe 1.svg";
                     <h1
                         class="font-poppins font-medium text-2xl text-wrap mobile:text-[24px]"
                     >
-                        7+
+                        19
                     </h1>
                     <p
                         class="font-poppins text-base text-center mobile:text-[12px]"
                     >
-                        collaborating <br />
+                        partnering <br />
                         schools
                     </p>
                 </div>

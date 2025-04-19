@@ -7,6 +7,9 @@ const items = [
     "/assets/images/sponsors/desmos.png",
     "/assets/images/sponsors/aops.svg",
     "/assets/images/sponsors/wolframalpha.svg",
+    "/assets/images/sponsors/intel.svg",
+    "/assets/images/sponsors/hersheys.svg",
+    "/assets/images/sponsors/k4c.svg",
 ];
 
 let interval;

@@ -11,7 +11,7 @@ import SponsorsCarousel from "./SponsorsCarousel/SponsorsCarousel.vue";
         </h1>
         <div class="sponsors-carousel w-full">
             <div
-                class="w-full scroll-auto grid grid-cols-4 grid-row-a items-center"
+                class="w-full scroll-auto grid grid-cols-7 grid-row-a items-center justify-center"
             >
                 <img
                     src="/assets/images/sponsors/google.png"
@@ -25,6 +25,18 @@ import SponsorsCarousel from "./SponsorsCarousel/SponsorsCarousel.vue";
                 <img
                     src="/assets/images/sponsors/wolframalpha.svg"
                     alt="wolframalpha logo"
+                />
+                <img
+                    src="/assets/images/sponsors/intel.svg"
+                    alt="intel logo"
+                />
+                <img
+                    src="/assets/images/sponsors/hersheys.svg"
+                    alt="hersheys logo"
+                />
+                <img
+                    src="/assets/images/sponsors/k4c.svg"
+                    alt="k4c logo"
                 />
             </div>
         </div>
