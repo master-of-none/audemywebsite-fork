@@ -26,19 +26,45 @@ const sendResetEmail = async (event) => {
         );
         // Handle the response from the API based on the status code
         console.log("Response:", emailResponse.status)
-        if (emailResponse.status === 404) {
-            // Set the flag to true to display the error message on the frontend
-            console.error("Error: User with provided email id not present.");
-            errors.value = true;
-        } else{
+        // Get the response data
+        const responseData = await emailResponse.json().catch(() => ({}));
+        
+        if (!emailResponse.ok) {
+            switch (emailResponse.status) {
+                case 404:
+                    // Handle user not found
+                    console.error("Error: User with provided email id not present.");
+                    errors.value = true;
+                    break;
+                case 400:
+                    // Handle bad request
+                    alert('Invalid request. Please check your email and try again.');
+                    break;
+                case 429:
+                    // Handle rate limiting
+                    alert('Too many requests. Please try again later.');
+                    break;
+                case 500:
+                case 502:
+                case 503:
+                case 504:
+                    // Handle server errors
+                    alert('Server error. Please try again later.');
+                    break;
+                default:
+                    // Handle other errors
+                    alert(`Error: ${responseData.error || 'Something went wrong'}`);
+            }
+        } else {
             // Route to reset-link-sent page if email sent successfully
             console.log("Email sent successfully.");
             router.push("/reset-link-sent");
         }
     } catch (error) {
-        // Set the flag to true to display the error message on the frontend
-        console.error("Error: Email not present- ", error);
+        // Handle network errors
+        console.error("Error: ", error);
         errors.value = true;
+        alert('Network error. Please check your connection and try again.');
     }    
 };
 </script>

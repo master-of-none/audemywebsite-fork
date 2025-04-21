@@ -171,6 +171,7 @@ import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 
 const errors = ref(false);
+const errorMessage = ref("Invalid email and password combination. Try again!");
 const email = ref("");
 const password = ref("");
 var authKey = ref("");
@@ -225,6 +226,52 @@ onMounted(() => {
     }
 });
 
+const showErrorAlert = (message) => {
+    errors.value = true;
+    errorMessage.value = message;
+    setTimeout(() => {
+        errors.value = false;
+    }, 5000);
+};
+
+const handleApiError = (status, message) => {
+    switch(status) {
+        case 400:
+            showErrorAlert("Bad request: " + (message || "Please check your input"));
+            break;
+        case 401:
+            showErrorAlert("Unauthorized: " + (message || "Invalid credentials"));
+            break;
+        case 403:
+            showErrorAlert("Forbidden: You don't have permission to access this resource");
+            break;
+        case 404:
+            showErrorAlert("Resource not found");
+            break;
+        case 405:
+            showErrorAlert("Method not allowed");
+            break;
+        case 429:
+            showErrorAlert("Too many requests: Please try again later");
+            break;
+        case 500:
+        case 502:
+        case 503:
+        case 504:
+            showErrorAlert("Server error: Please try again later");
+            break;
+        default:
+            showErrorAlert(message || "An error occurred");
+    }
+};
+
+const resetErrors = () => {
+    setTimeout(() => {
+        errors.value = false;
+    }, 5000);
+};
+
+
 const login = async (event) => {
     event.preventDefault();
     errors.value = false;
@@ -251,7 +298,9 @@ const login = async (event) => {
         // console.log("Response Data:", data);
 
         if (!response.ok) {
-            throw new Error(data.message || "Failed to login");
+            const data = await response.json().catch(() => ({}));
+            handleApiError(response.status, data.message || "Failed to login");
+            return;
         }
 
         authKey.value = response.headers.get("authorization");
@@ -265,6 +314,7 @@ const login = async (event) => {
         router.push("/game-zone");
     } catch (error) {
         console.error("Error:", error);
+        showErrorAlert("Connection error: Please check your internet connection");
     }
 };
 
@@ -280,6 +330,8 @@ const callback = async (response) => {
             };
         } catch (error) {
             console.error("Failed to decode JWT:", error);
+            showErrorAlert("Failed to process Google login");
+            return;
         }
     }
 
@@ -290,6 +342,12 @@ const callback = async (response) => {
             headers: { "Content-Type": "application/json" },
         }
     );
+
+    if (!dbResponse.ok) {
+            const errorData = await dbResponse.json().catch(() => ({}));
+            handleApiError(dbResponse.status, errorData.message || "Failed to retrieve user data");
+            return;
+        }
 
     const dbData = await dbResponse.json();
     console.log("DB Response:", dbData);
@@ -334,6 +392,12 @@ const updateSchool = async () => {
             }),
         });
 
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            handleApiError(response.status, errorData.message || "Failed to update school information");
+            return;
+        }
+
         const data = await response.json();
         console.log("Updated user:", data);
 
@@ -354,9 +418,12 @@ const updateSchool = async () => {
             };
             showSchoolForm.value = false;
             router.push("/game-zone");
+        } else {
+            showErrorAlert(data.message || "Failed to update school information");
         }
     } catch (error) {
         console.error("Error updating school:", error);
+        showErrorAlert("Connection error: Please check your internet connection");
     }
 };
 

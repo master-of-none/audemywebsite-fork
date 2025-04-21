@@ -265,6 +265,31 @@ const submitForm = async (event) => {
         const data = await response.json();
 
         if (!response.ok) {
+            switch (response.status) {
+                case 400:
+                    alert('Invalid signup data. Please check your information.');
+                    break;
+                case 401:
+                    alert('Unauthorized. Please try again.');
+                    break;
+                case 409:
+                    alert('Email already exists. Please use a different email or try logging in.');
+                    break;
+                case 422:
+                    alert('Invalid data format. Please check your information.');
+                    break;
+                case 429:
+                    alert('Too many signup attempts. Please try again later.');
+                    break;
+                case 500:
+                case 502:
+                case 503:
+                case 504:
+                    alert('Server error. Please try again later.');
+                    break;
+                default:
+                    alert(`Signup error: ${data.error || 'Something went wrong'}`);
+            }
             throw new Error(data.error || "Something went wrong");
         }
 
@@ -286,6 +311,28 @@ const submitForm = async (event) => {
         });
         const loginData = await loginResponse.json();
         if (!loginResponse.ok) {
+            switch (loginResponse.status) {
+                case 400:
+                    alert('Invalid login request. Please check your information.');
+                    break;
+                case 401:
+                    alert('Invalid email or password. Please try again.');
+                    break;
+                case 404:
+                    alert('Account not found. Please check your email.');
+                    break;
+                case 429:
+                    alert('Too many login attempts. Please try again later.');
+                    break;
+                case 500:
+                case 502:
+                case 503:
+                case 504:
+                    alert('Server error. Please try again later.');
+                    break;
+                default:
+                    alert(`Login error: ${loginData.error || 'Something went wrong'}`);
+            }
             throw new Error(loginData.error || "Something went wrong");
         }
         console.log("Login Successful", loginData);
@@ -305,6 +352,9 @@ const submitForm = async (event) => {
     } catch (error) {
         console.error("Error:", error.message);
         // Handle error (e.g., show error message to the user)
+        if (!error.message.includes("Something went wrong")) {
+            alert(`Error: ${error.message}`);
+        }
     }
 };
 
