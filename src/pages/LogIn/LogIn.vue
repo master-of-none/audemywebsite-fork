@@ -41,7 +41,7 @@
             <form
                 @submit="login"
                 method="post"
-                class="max-h-[350px] w-full flex flex-col justify-center items-center gap-[5%] my-4"
+                class="w-full flex flex-col justify-center items-center gap-6 my-4"
             >
                 <h1
                     class="text-[36px] text-[#151E22] text-center w-7/12 mobile:w-full mobile:text-[24px] mobile:mb-4"
@@ -109,7 +109,7 @@
                         </h5>
                     </div>
 
-                    <div class="flex justify-center w-full pt-4">
+                    <div class="flex justify-center w-full pt-4 mb-6">
                         <button
                             type="submit"
                             class="w-full py-3 font-bold rounded-[8px] bg-[#FE892A] hover:bg-[#ff8d33] border-2 border-black shadow-[4px_4px_0px_black] text-black"
@@ -121,15 +121,15 @@
             </form>
 
             <div
-                class="flex w-1/2 text-gray-500 items-center justify-center gap-2"
+                class="flex w-1/2 text-gray-500 items-center justify-center gap-2 my-4"
             >
-                <div><hr class="w-52 h-0.5 my-4 bg-gray-500 rounded-sm" /></div>
+                <div><hr class="w-32 md:w-52 h-0.5 bg-gray-500 rounded-sm" /></div>
                 <div>or</div>
-                <div><hr class="w-52 h-0.5 my-4 bg-gray-500 rounded-sm" /></div>
+                <div><hr class="w-32 md:w-52 h-0.5 bg-gray-500 rounded-sm" /></div>
             </div>
 
             <!-- Google OAuth Login -->
-            <div class="flex w-full gap-4 items-center justify-center mt-4">
+            <div class="flex w-full gap-4 items-center justify-center mt-4 mb-8">
                 <GoogleLogin
                     :callback="callback"
                     class="flex items-center justify-center gap-4"
@@ -255,10 +255,16 @@ const handleApiError = (status, message) => {
             showErrorAlert("Too many requests: Please try again later");
             break;
         case 500:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
         case 502:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
         case 503:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
         case 504:
-            showErrorAlert("Server error: Please try again later");
+            showErrorAlert("Internal server error. Please try again later.");
             break;
         default:
             showErrorAlert(message || "An error occurred");
@@ -293,6 +299,21 @@ const login = async (event) => {
         // // Log response before parsing
         // const textResponse = await response.text();
         // console.log("Raw Response:", textResponse);
+        // Check if response is JSON before trying to parse it
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const errorText = await response.text();
+            console.error("Non-JSON response:", errorText);
+            
+            if (!response.ok) {
+                alert(`Server error: ${response.status}. ${errorText || "No details provided"}`);
+                throw new Error(`Server error: ${response.status}`);
+            }
+            
+            console.log("Success with non-JSON response");
+            window.location.href = "/login";
+            return;
+        }
 
         const data = await response.json();
         // console.log("Response Data:", data);

@@ -262,35 +262,60 @@ const submitForm = async (event) => {
             }),
         });
 
+        // Check if response is JSON before trying to parse it
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const errorText = await response.text();
+            console.error("Non-JSON response:", errorText);
+            
+            if (!response.ok) {
+                alert(`Server error: ${response.status}. ${errorText || "No details provided"}`);
+                throw new Error(`Server error: ${response.status}`);
+            }
+            
+            console.log("Success with non-JSON response");
+            window.location.href = "/login";
+            return;
+        }
+
         const data = await response.json();
 
         if (!response.ok) {
             switch (response.status) {
                 case 400:
-                    alert('Invalid signup data. Please check your information.');
+                    showErrorAlert("Bad request: " + (message || "Please check your input"));
                     break;
                 case 401:
-                    alert('Unauthorized. Please try again.');
+                    showErrorAlert("Unauthorized: " + (message || "Invalid credentials"));
                     break;
-                case 409:
-                    alert('Email already exists. Please use a different email or try logging in.');
+                case 403:
+                    showErrorAlert("Forbidden: You don't have permission to access this resource");
                     break;
-                case 422:
-                    alert('Invalid data format. Please check your information.');
+                case 404:
+                    showErrorAlert("Resource not found");
+                    break;
+                case 405:
+                    showErrorAlert("Method not allowed");
                     break;
                 case 429:
-                    alert('Too many signup attempts. Please try again later.');
+                    showErrorAlert("Too many requests: Please try again later");
                     break;
                 case 500:
+                    showErrorAlert("Internal server error. Please try again later.");
+                    break;
                 case 502:
+                    showErrorAlert("Internal server error. Please try again later.");
+                    break;
                 case 503:
+                    showErrorAlert("Internal server error. Please try again later.");
+                    break;
                 case 504:
-                    alert('Server error. Please try again later.');
+                    showErrorAlert("Internal server error. Please try again later.");
                     break;
                 default:
                     alert(`Signup error: ${data.error || 'Something went wrong'}`);
             }
-            throw new Error(data.error || "Something went wrong");
+            throw new Error("Internal server error. Please try again later.");
         }
 
         console.log("Success:", data);
@@ -324,11 +349,17 @@ const submitForm = async (event) => {
                 case 429:
                     alert('Too many login attempts. Please try again later.');
                     break;
-                case 500:
+                    case 500:
+                    showErrorAlert("Internal server error. Please try again later.");
+                    break;
                 case 502:
+                    showErrorAlert("Internal server error. Please try again later.");
+                    break;
                 case 503:
+                    showErrorAlert("Internal server error. Please try again later.");
+                    break;
                 case 504:
-                    alert('Server error. Please try again later.');
+                    showErrorAlert("Internal server error. Please try again later.");
                     break;
                 default:
                     alert(`Login error: ${loginData.error || 'Something went wrong'}`);

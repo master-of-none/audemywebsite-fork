@@ -22,29 +22,35 @@ const submitForm = () => {
       // Handle specific error codes
       switch (response.status) {
         case 400:
-          alert('Invalid request. Please check your input and try again.');
-          break;
+            showErrorAlert("Bad request: " + (message || "Please check your input"));
+            break;
         case 401:
-          alert('Unauthorized. Please log in again.');
-          break;
+            showErrorAlert("Unauthorized: " + (message || "Invalid credentials"));
+            break;
         case 403:
-          alert('Forbidden. You don\'t have permission to access this resource.');
-          break;
+            showErrorAlert("Forbidden: You don't have permission to access this resource");
+            break;
         case 404:
-          alert('Resource not found. Please try again later.');
-          break;
+            showErrorAlert("Resource not found");
+            break;
         case 405:
-          alert('Method not allowed. Please try a different action.');
-          break;
+            showErrorAlert("Method not allowed");
+            break;
         case 429:
-          alert('Too many requests. Please try again later.');
-          break;
+            showErrorAlert("Too many requests: Please try again later");
+            break;
         case 500:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
         case 502:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
         case 503:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
         case 504:
-          alert('Server error. Please try again later.');
-          break;
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
         default:
           alert(`Error: ${response.status}. Please try again later.`);
       }

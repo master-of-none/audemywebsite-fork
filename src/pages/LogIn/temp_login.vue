@@ -25,32 +25,38 @@ const showErrorAlert = (message) => {
 
 const handleApiError = (status, message) => {
   switch(status) {
-    case 400:
-      showErrorAlert("Bad request: " + (message || "Please check your input"));
-      break;
-    case 401:
-      showErrorAlert("Unauthorized: " + (message || "Invalid credentials"));
-      break;
-    case 403:
-      showErrorAlert("Forbidden: You don't have permission to access this resource");
-      break;
-    case 404:
-      showErrorAlert("Resource not found");
-      break;
-    case 405:
-      showErrorAlert("Method not allowed");
-      break;
-    case 429:
-      showErrorAlert("Too many requests: Please try again later");
-      break;
-    case 500:
-    case 502:
-    case 503:
-    case 504:
-      showErrorAlert("Server error: Please try again later");
-      break;
-    default:
-      showErrorAlert(message || "An error occurred");
+        case 400:
+            showErrorAlert("Bad request: " + (message || "Please check your input"));
+            break;
+        case 401:
+            showErrorAlert("Unauthorized: " + (message || "Invalid credentials"));
+            break;
+        case 403:
+            showErrorAlert("Forbidden: You don't have permission to access this resource");
+            break;
+        case 404:
+            showErrorAlert("Resource not found");
+            break;
+        case 405:
+            showErrorAlert("Method not allowed");
+            break;
+        case 429:
+            showErrorAlert("Too many requests: Please try again later");
+            break;
+        case 500:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
+        case 502:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
+        case 503:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
+        case 504:
+            showErrorAlert("Internal server error. Please try again later.");
+            break;
+        default:
+          showErrorAlert(message || "An error occurred");
   }
 };
 

@@ -31,31 +31,41 @@ const sendResetEmail = async (event) => {
         
         if (!emailResponse.ok) {
             switch (emailResponse.status) {
-                case 404:
-                    // Handle user not found
-                    console.error("Error: User with provided email id not present.");
-                    errors.value = true;
-                    break;
                 case 400:
-                    // Handle bad request
-                    alert('Invalid request. Please check your email and try again.');
+                    showErrorAlert("Bad request: " + (message || "Please check your input"));
+                    break;
+                case 401:
+                    showErrorAlert("Unauthorized: " + (message || "Invalid credentials"));
+                    break;
+                case 403:
+                    showErrorAlert("Forbidden: You don't have permission to access this resource");
+                    break;
+                case 404:
+                    showErrorAlert("Resource not found");
+                    break;
+                case 405:
+                    showErrorAlert("Method not allowed");
                     break;
                 case 429:
-                    // Handle rate limiting
-                    alert('Too many requests. Please try again later.');
+                    showErrorAlert("Too many requests: Please try again later");
                     break;
                 case 500:
+                    showErrorAlert("Internal server error. Please try again later.");
+                    break;
                 case 502:
+                    showErrorAlert("Internal server error. Please try again later.");
+                    break;
                 case 503:
+                    showErrorAlert("Internal server error. Please try again later.");
+                    break;
                 case 504:
-                    // Handle server errors
-                    alert('Server error. Please try again later.');
+                    showErrorAlert("Internal server error. Please try again later.");
                     break;
                 default:
                     // Handle other errors
-                    alert(`Error: ${responseData.error || 'Something went wrong'}`);
-            }
-        } else {
+                    alert('Unexpected error occurred.');
+                }
+            } else {
             // Route to reset-link-sent page if email sent successfully
             console.log("Email sent successfully.");
             router.push("/reset-link-sent");

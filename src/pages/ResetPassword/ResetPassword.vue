@@ -42,7 +42,7 @@ const handleApiError = (status, message) => {
             break;
         case 500:
             linkExpired.value = true;
-            errorMessage.value = "Server error: Password reset link may have expired";
+            errorMessage.value = "Internal server error: Password reset link may have expired";
             break;
         default:
             errorMessage.value = message || "An error occurred during password reset";
