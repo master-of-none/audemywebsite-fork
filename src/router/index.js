@@ -6,15 +6,25 @@ import GameZone from "../pages/GameZone/GameZone.vue";
 import LogIn from "../pages/LogIn/LogIn.vue";
 import NotFound from "../pages/NotFound/NotFound.vue";
 import SignUp from "../pages/SignUp/SignUp.vue";
-import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.vue";
-import ResetLinkSent from "../pages/ForgotPassword/ResetLinkSent.vue";
-import ResetPassword from "../pages/ResetPassword/ResetPassword.vue";
-import ResetConfirm from "../pages/ResetPassword/ResetConfirm.vue";
-import ResetLandingPage from "../pages/ResetPassword/ResetLandingPage.vue";
 import AboutUs from "../pages/AboutUs/AboutUs.vue";
 import Impact from "../pages/Impact/Impact.vue";
-import Troubleshooting from "../pages/Troubleshooting/Troubleshooting.vue"
+import AdditionGame from "../pages/GameZone/GameZoneList/AdditionGame.vue";
+import MultiplicationMadness from "../pages/GameZone/GameZoneList/MultiplicationMadness.vue";
+import SubtractionGame from "../pages/GameZone/GameZoneList/SubtractionGame.vue";
+import DivisionDuel from "../pages/GameZone/GameZoneList/DivisionDuel.vue";
+import Vocab from "../pages/GameZone/GameZoneList/Vocab.vue";
+import OddOneOut from "../pages/GameZone/GameZoneList/OddOneOut.vue";
+import PolarPairing from "../pages/GameZone/GameZoneList/PolarPairing.vue";
 // import SpellingBee from "../pages/GameZone/GameZoneList/SpellingBee/SpellingBee.vue";
+import SpellingBee from "../pages/GameZone/GameZoneList/SpellingBee.vue";
+import CarCounting from "../pages/GameZone/GameZoneList/CarCounting.vue";
+import FruitFrenzy from "../pages/GameZone/GameZoneList/FruitFrenzy.vue";
+import MonkeyMadness from "../pages/GameZone/GameZoneList/MonkeyMadness.vue";
+import ShapeShark from "../pages/GameZone/GameZoneList/ShapeShark.vue";
+import SyllableSorting from "../pages/GameZone/GameZoneList/SyllableSorting.vue";
+import DefinitionDetective from "../pages/GameZone/GameZoneList/DefinitionDetective.vue";
+import PartOfSpeech from "../pages/GameZone/GameZoneList/PartOfSpeech.vue";
+import ColorGame from "../pages/GameZone/GameZoneList/ColorGame.vue";
 
 const routes = [
     { path: "/home", redirect: "/" },
@@ -25,97 +35,91 @@ const routes = [
     { path: "/about-us", name: "About-Us", component: AboutUs },
     { path: "/login", name: "LogIn", component: LogIn },
     { path: "/signup", name: "Sign Up", component: SignUp },
-    { path: "/forgot-password", name: "Forgot Password", component: ForgotPassword },
-    { path: "/reset-link-sent", name: "Reset Link Sent", component: ResetLinkSent },
-    { path: "/reset-password", name: "Reset Password", component: ResetPassword },
-    { path: "/reset-confirm", name: "Reset Confirm", component: ResetConfirm },
-    { path: "/reset-landing-page", name: "Reset Landing Page", component: ResetLandingPage },
     { path: "/:pathMatch(.*)*", name: "not-found", component: NotFound },
-    { path: "/troubleshooting", name: "Troubleshooting Page", component: Troubleshooting },
     {
         path: "/game/addition",
         name: "AdditionGame",
-        component: () => import("../pages/GameZone/GameZoneList/AdditionGame.vue"),
+        component: AdditionGame,
     },
     {
         path: "/game/multiplicationmadness",
         name: "MultiplicationMadness",
-        component: () => import("../pages/GameZone/GameZoneList/MultiplicationMadness.vue"),
+        component: MultiplicationMadness,
     },
     {
         path: "/game/subtraction",
         name: "SubtractionGame",
-        component: () => import("../pages/GameZone/GameZoneList/SubtractionGame.vue"),
+        component: SubtractionGame,
     },
     {
         path: "/game/vocabVortex",
         name: "vocabVortex",
-        component: () => import("../pages/GameZone/GameZoneList/Vocab.vue"),
+        component: Vocab,
     },
     {
         path: "/game/divisionDuel",
         name: "DivisionDuel",
-        component: () => import("../pages/GameZone/GameZoneList/DivisionDuel.vue"),
+        component: DivisionDuel,
     },
     {
         path: "/game/oddoneout",
         name: "OddOneOut",
-        component: () => import("../pages/GameZone/GameZoneList/OddOneOut.vue"),
+        component: OddOneOut,
     },
     {
         path: "/game/polarpairing",
         name: "PolarPairing",
-        component: () => import("../pages/GameZone/GameZoneList/PolarPairing.vue"),
+        component: PolarPairing,
     },
-    // {
-    //     path: "/game/spelling-bee",
-    //     name: "SpellingBee",
-    //     component: SpellingBee,
-    // },
+    {
+        path: "/game/spelling-bee",
+        name: "SpellingBee",
+        component: SpellingBee,
+    },
     {
         path: "/game/spellingbee",
         name: "SpellingBee",
-        component: () => import("../pages/GameZone/GameZoneList/SpellingBee.vue"),
+        component: SpellingBee,
     },
     {
         path: "/game/carcounting",
         name: "CarCounting",
-        component: () => import("../pages/GameZone/GameZoneList/CarCounting.vue"),
+        component: CarCounting,
     },
     {
         path: "/game/fruitfrenzy",
         name: "FruitFrenzy",
-        component: () => import("../pages/GameZone/GameZoneList/FruitFrenzy.vue"),
+        component: FruitFrenzy,
     },
     {
         path: "/game/monkeymadness",
         name: "MonkeyMadness",
-        component: () => import("../pages/GameZone/GameZoneList/MonkeyMadness.vue"),
+        component: MonkeyMadness,
     },
     {
         path: "/game/shapeshark",
         name: "ShapeShark",
-        component: () => import("../pages/GameZone/GameZoneList/ShapeShark.vue"),
+        component: ShapeShark,
     },
     {
         path: "/game/syllableSorting",
         name: "SyllableSorting",
-        component: () => import("../pages/GameZone/GameZoneList/SyllableSorting.vue"),
+        component: SyllableSorting,
     },
     {
         path: "/game/definitionDetective",
         name: "DefinitionDetective",
-        component: () => import("../pages/GameZone/GameZoneList/DefinitionDetective.vue"),
+        component: DefinitionDetective,
     },
     {
         path: "/game/partofspeech",
         name: "PartOfSpeech",
-        component: () => import("../pages/GameZone/GameZoneList/PartOfSpeech.vue"),
+        component: PartOfSpeech,
     },
     {
         path: "/game/colorgame",
         name: "ColorGame",
-        component: () => import("../pages/GameZone/GameZoneList/ColorGame.vue"),
+        component: ColorGame,
     },
 ];
 

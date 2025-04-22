@@ -1,15 +1,11 @@
 <template>
-  <div class="min-h-screen font-poppins bg-[#FFBCEE]">
+  <div
+    class="min-h-screen font-poppins bg-[#FFBCEE]"
+  >
     <!-- Header -->
     <div class="w-full">
       <GamePagesHeader />
     </div>
-
-    <!-- Something Not Working? Button -->
-    <GamePagesFooter
-      :handleSthNotWorkingButtonClick="handleSthNotWorkingButtonClick"
-      :currentAudios="currentAudios"
-    />
 
     <!-- Decorative Elements -->
     <div
@@ -17,7 +13,7 @@
     >
       <!-- Sun - Only for desktop -->
       <div
-        v-show="!isTablet && !isMobile"
+        v-if="!isTablet && !isMobile"
         class="absolute top-20 right-60 w-32 h-32"
       >
         <svg viewBox="0 0 100 100" class="w-full h-full">
@@ -81,7 +77,7 @@
     <div class="flex items-center justify-center min-h-[calc(100vh-64px)]">
       <div class="relative w-full max-w-[800px]">
         <!-- Back Button Container -->
-        <div v-show="!isMobile" class="absolute top-4 left-4 z-30">
+        <div v-if="!isMobile" class="absolute top-4 left-4 z-30">
           <button @click="goBack">
             <img
               src="/assets/gameImages/buttons/arrow-back.svg"
@@ -101,7 +97,7 @@
           ]"
         >
           <!-- Back Button for Mobile -->
-          <div v-show="isMobile" class="self-center -mt-32 mb-8">
+          <div v-if="isMobile" class="self-center -mt-32 mb-8">
             <button @click="goBack">
               <img
                 src="/assets/gameImages/buttons/arrow-back.svg"
@@ -153,28 +149,27 @@
 
             <!-- Question and answer section -->
             <div
-              v-else-if="numOfAudiosPlayed < 5 && playButton === true"
+              v-else-if="
+                numOfAudiosPlayed < 5 && playButton === true
+              "
               class="flex flex-col p-4 justify-center"
               id="content"
             >
               <!-- Mobile/Tablet Start Questions Button - Only show before questions start -->
-              <div v-show="(isTablet || isMobile) && numOfAudiosPlayed === 0">
+              <div v-if="(isTablet || isMobile) && numOfAudiosPlayed === 0">
                 <button
                   @click="startFirstQuestion"
                   class="bg-[#087bb4] text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-[#0d5f8b] mb-6"
                   :disabled="isIntroPlaying"
                   :class="{ 'opacity-50 cursor-not-allowed': isIntroPlaying }"
                 >
-                  {{ isIntroPlaying ? "Please wait..." : "Start Questions" }}
+                  {{ isIntroPlaying ? 'Please wait...' : 'Start Questions' }}
                 </button>
               </div>
 
               <!-- Different button styling for tablet -->
               <div
-                v-show="
-                  !(isTablet || isMobile) ||
-                  (!isIntroPlaying && numOfAudiosPlayed > 0)
-                "
+                v-show="!(isTablet || isMobile) || (!isIntroPlaying && numOfAudiosPlayed > 0)"
                 :class="[
                   isTablet
                     ? 'flex gap-[25px] mb-6'
@@ -186,10 +181,28 @@
                 <!-- Record Answer Button -->
                 <button
                   @click="toggleRecording"
-                  :class="recordButtonClasses"
+                  :class="[
+                    'flex items-center justify-center shadow-md',
+                    isTablet
+                      ? 'w-[200px] h-[60px] pt-5 pr-[30px] pb-5 pl-[30px] gap-[10px] rounded-[20px]'
+                      : isMobile
+                      ? 'w-full h-[60px] pt-5 pr-[30px] pb-5 pl-[30px] gap-[10px] rounded-[20px]'
+                      : 'gap-2.5 w-[234px] h-[116px] pt-5 pr-7 pb-5 pl-7 rounded-[20px]',
+                    isRecording ? 'bg-red-500' : 'bg-[#087BB4]',
+                    'text-white',
+                    isIntroPlaying || isButtonCooldown
+                      ? 'opacity-50 cursor-not-allowed'
+                      : '',
+                  ]"
                   style="box-shadow: 10px 10px 20px 0px #32323233"
-                  :disabled="isButtonDisabled"
-                  :title="recordButtonTitle"
+                  :disabled="isIntroPlaying || isButtonCooldown"
+                  :title="
+                    isIntroPlaying
+                      ? 'Please wait until the introduction finishes'
+                      : isButtonCooldown
+                      ? 'Please wait until the question finishes playing'
+                      : 'Record your answer'
+                  "
                 >
                   <span class="text-lg font-medium">
                     {{
@@ -245,10 +258,7 @@
 
               <div
                 id="transcript"
-                v-show="
-                  !(isTablet || isMobile) ||
-                  (!isIntroPlaying && numOfAudiosPlayed > 0)
-                "
+                v-show="!(isTablet || isMobile) || (!isIntroPlaying && numOfAudiosPlayed > 0)"
                 class="text-center text-xl font-bold pt-2 pb-1"
               >
                 You said: {{ transcription }}
@@ -272,10 +282,8 @@
 </template>
 
 <script setup>
-// 1. Imports
 import { onMounted, onUnmounted, ref, watch, computed } from "vue";
 import GamePagesHeader from "../../Header/GamePagesHeader.vue";
-import GamePagesFooter from "../../Footer/GamePagesFooter.vue"
 import { requestMicPermission } from "../../../Utilities/requestMicAccess";
 import {
   playIntro,
@@ -289,122 +297,34 @@ import {
   stopListening,
 } from "../../../Utilities/speechRecognition";
 
-// 2. Props / Emits
-// (none in this component)
-
-// 3. Refs & Reactive State
-// Arrays (static data)
-const currentAudios = [];
-const randQueNum = [];
-
-// Game state variables
-const numOfAudiosPlayed = ref(0);
-const score = ref(0);
-const questionsDb = ref([]);
-const isRecording = ref(false);
-const transcription = ref("");
-
-// UI control states
-const playButton = ref(false);
-const isIntroPlaying = ref(false);
-const isButtonCooldown = ref(false);
-
-// Device Detection
+// Device detection
 const isTablet = ref(false);
 const isMobile = ref(false);
-
-// 4. Computed Properties
 const isDesktop = computed(() => !isTablet.value && !isMobile.value);
 
-const currentQuestion = computed(() => {
-  if (
-    numOfAudiosPlayed.value < 5 &&
-    questionsDb.value.length > 0 &&
-    randQueNum.length > numOfAudiosPlayed.value
-  ) {
-    return questionsDb.value[randQueNum[numOfAudiosPlayed.value]];
-  }
-  return null;
-});
-
-const isButtonDisabled = computed(
-  () => isIntroPlaying.value || isButtonCooldown.value
-);
-
-const recordButtonClasses = computed(() => [
-  "flex items-center justify-center shadow-md",
-  isTablet.value
-    ? "w-[200px] h-[60px] pt-5 pr-[30px] pb-5 pl-[30px] gap-[10px] rounded-[20px]"
-    : isMobile.value
-    ? "w-full h-[60px] pt-5 pr-[30px] pb-5 pl-[30px] gap-[10px] rounded-[20px]"
-    : "gap-2.5 w-[234px] h-[116px] pt-5 pr-7 pb-5 pl-7 rounded-[20px]",
-  isRecording.value ? "bg-red-500" : "bg-[#087BB4]",
-  "text-white",
-  isButtonDisabled.value ? "opacity-50 cursor-not-allowed" : "",
-]);
-
-const recordButtonTitle = computed(() => {
-  if (isIntroPlaying.value)
-    return "Please wait until the introduction finishes";
-  if (isButtonCooldown.value)
-    return "Please wait until the question finishes playing";
-  return "Record your answer";
-});
-
-// 5. Watch/WatchEffect
-// (no global watch/watchEffect in this component)
-
-// 6. Lifecycle Hooks
-onMounted(() => {
-  // Request microphone access on page load
-  console.log("Requesting microphone access...");
-  requestMicPermission();
-
-  // Check device type initially and set up listener for window resize
-  checkDeviceType();
-  window.addEventListener("resize", checkDeviceType);
-
-  generateQuestions();
-
-  // Watcher for play button
-  watch(playButton, (newVal) => {
-    if (newVal) {
-      isIntroPlaying.value = true;
-      const introAudio = playIntro("/animalAddition/additionintro.mp3");
-      currentAudios.push(introAudio);
-      introAudio.onended = () => {
-        isIntroPlaying.value = false;
-        // Only auto-play next question on desktop
-        if (isDesktop.value) {
-          playNextQuestion();
-        }
-      };
-    }
-  });
-});
-
-onUnmounted(() => {
-  // Stop audio playback and cleanup listeners
-  console.log("Navigated Back!");
+// Function to handle back button click
+const goBack = () => {
+  console.log("Going back...");
+  // Stop all audio playback before navigating away
   stopAudios(currentAudios);
-  window.removeEventListener("resize", checkDeviceType);
-});
+  // Save the source category to sessionStorage
+  sessionStorage.setItem("gameCategory", "math");
+  // Force navigate to the game zone page
+  window.location.href = "/game-zone";
+};
 
-// 7. Functions/Methods
-/**
- * Checks the device type on mount and on window resize
- */
+// Check device type on mount and on window resize
 const checkDeviceType = () => {
   const width = window.innerWidth;
   if (width >= 640 && width < 768) {
     // Small devices (large phones)
     isTablet.value = false;
     isMobile.value = true;
-  } else if (width >= 768 && width <= 1024) {
+  } else if (width >= 768 && width <= 1024) { 
     // Medium devices (tablets, including iPad Pro width)
     isTablet.value = true;
     isMobile.value = false;
-  } else if (width > 1024) {
+  } else if (width > 1024) { 
     // Large devices (laptops/desktops)
     isTablet.value = false;
     isMobile.value = false;
@@ -415,9 +335,19 @@ const checkDeviceType = () => {
   }
 };
 
-/**
- * Generates addition questions from JSON file
- */
+const currentAudios = [];
+const randQueNum = [];
+const numOfAudiosPlayed = ref(0);
+const score = ref(0);
+const questionsDb = ref([]);
+const isListening = ref(false);
+const transcription = ref("");
+const playButton = ref(false);
+const isIntroPlaying = ref(false);
+const isRecording = ref(false);
+const isButtonCooldown = ref(false);
+
+// Generate addition questions using Json file
 const generateQuestions = () => {
   console.log("Generating Questions...");
   fetch("/assets/questionsDb/additionDb.json")
@@ -428,7 +358,7 @@ const generateQuestions = () => {
         ...data["AdditionGame"]["Questions"]["Medium"],
         ...data["AdditionGame"]["Questions"]["Hard"],
       ];
-
+      
       // Only need 5 random questions
       while (randQueNum.length < 5) {
         let num = Math.floor(Math.random() * allQuestions.length);
@@ -445,24 +375,21 @@ const generateQuestions = () => {
     });
 };
 
-/**
- * Plays the next question
- */
+// Play the next question
 const playNextQuestion = () => {
-  if (numOfAudiosPlayed.value < 5 && currentQuestion.value) {
-    console.log(currentQuestion.value);
-    currentAudios.push(playQuestion(currentQuestion.value["Q"]));
+  if (numOfAudiosPlayed.value < 5) {
+    const question = questionsDb.value[randQueNum[numOfAudiosPlayed.value]];
+    console.log(question);
+    currentAudios.push(playQuestion(question["Q"]));
   }
 };
 
-/**
- * Toggles the recording state when the record button is clicked
- */
+// Toggle recording state when record button is clicked
 const toggleRecording = () => {
   if (numOfAudiosPlayed.value < 5 && !isIntroPlaying.value) {
     if (!isRecording.value) {
       isRecording.value = true;
-
+      
       startListening((transcript) => {
         transcription.value = transcript;
       }, false);
@@ -471,9 +398,8 @@ const toggleRecording = () => {
       console.log("Processing recording...");
 
       const finalTranscript = transcription.value;
-
+      
       // Process the answer
-
       const question = questionsDb.value[randQueNum[numOfAudiosPlayed.value]];
       console.log("Question is: ", question["Q"]);
       console.log("User Answer:", finalTranscript);
@@ -502,18 +428,18 @@ const toggleRecording = () => {
           currentAudios.push(playQuestion(incorectAudio));
         }, 1000);
       }
-
+      
       // Stop listening
       stopListening();
       isRecording.value = false;
       numOfAudiosPlayed.value++;
-
+      
       // Reset transcription for next question
       setTimeout(() => {
         transcription.value = "";
         isButtonCooldown.value = false;
         console.log("Recording processed and stopped");
-
+        
         // Move to next question or end game
         if (numOfAudiosPlayed.value < 5) {
           setTimeout(() => {
@@ -530,20 +456,7 @@ const toggleRecording = () => {
   }
 };
 
-/**
- * Handles the back button click
- */
-const goBack = () => {
-  console.log("Going back...");
-  // Stop all audio playback before navigating away
-  stopAudios(currentAudios);
-  // Force navigate to the game zone page
-  window.location.href = "/game-zone";
-};
-
-/**
- * Repeats the current question
- */
+// Repeat the current question
 const repeatQuestion = () => {
   if (
     numOfAudiosPlayed.value < 5 &&
@@ -573,27 +486,44 @@ const repeatQuestion = () => {
   }
 };
 
-/**
- * Starts the first question
- * Only used for mobile devices
- */
+// Add new function to handle first question start
 const startFirstQuestion = () => {
   console.log("Starting first question...");
-  numOfAudiosPlayed.value = 1;
+  numOfAudiosPlayed.value = 1;  // This will trigger the buttons to show
   playNextQuestion();
 };
 
-/**
- * Handles the something not working button click
- */
- const handleSthNotWorkingButtonClick = () => {
-  console.log("Navigating to Troubleshooting Page...");
-  // Stop all audio playback before navigating away
-  stopAudios(currentAudios);
-  // Force navigate to the game zone page
-  window.location.href = "/troubleshooting";
-};
+onMounted(() => {
+  // Request microphone access on page load
+  console.log("Requesting microphone access...");
+  requestMicPermission();
 
-// 8. Exposed Values
-// (none exposed in this component)
+  // Check device type
+  checkDeviceType();
+  window.addEventListener("resize", checkDeviceType);
+
+  // Generate questions
+  generateQuestions();
+
+  watch(playButton, (newVal) => {
+    if (newVal) {
+      isIntroPlaying.value = true;
+      const introAudio = playIntro("/animalAddition/additionintro.mp3");
+      currentAudios.push(introAudio);
+      introAudio.onended = () => {
+        isIntroPlaying.value = false;
+        // Only auto-play next question on desktop
+        if (isDesktop.value) {
+          playNextQuestion();
+        }
+      };
+    }
+  });
+});
+
+onUnmounted(() => {
+  console.log("Navigated Back!");
+  stopAudios(currentAudios);
+  window.removeEventListener("resize", checkDeviceType);
+});
 </script>
