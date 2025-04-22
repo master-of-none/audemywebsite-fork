@@ -5,11 +5,11 @@
             "body": [
                 {
                     "type": "title",
-                    "content": "Safari or Firefox"
+                    "content": "Safari, Firefox, and Edge"
                 },
                 {
                     "type": "text",
-                    "content": "Oops! Our games don’t fully work on Safari or Firefox just yet. For now, please switch to Google Chrome for the best experience."
+                    "content": "Oops! Our games don’t fully work on Safari, Firefox, or Edge just yet. For now, please switch to Google Chrome for the best experience."
                 },
                 {
                     "type": "text",
