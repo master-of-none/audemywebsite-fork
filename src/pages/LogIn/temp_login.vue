@@ -17,55 +17,13 @@ onMounted(() => {
     }
 });
 
-const showErrorAlert = (message) => {
-  errors.value = true;
-  errorMessage.value = message;
-  resetErrors();
-};
-
-const handleApiError = (status, message) => {
-  switch(status) {
-        case 400:
-            showErrorAlert("Bad request: " + (message || "Please check your input"));
-            break;
-        case 401:
-            showErrorAlert("Unauthorized: " + (message || "Invalid credentials"));
-            break;
-        case 403:
-            showErrorAlert("Forbidden: You don't have permission to access this resource");
-            break;
-        case 404:
-            showErrorAlert("Resource not found");
-            break;
-        case 405:
-            showErrorAlert("Method not allowed");
-            break;
-        case 429:
-            showErrorAlert("Too many requests: Please try again later");
-            break;
-        case 500:
-            showErrorAlert("Internal server error. Please try again later.");
-            break;
-        case 502:
-            showErrorAlert("Internal server error. Please try again later.");
-            break;
-        case 503:
-            showErrorAlert("Internal server error. Please try again later.");
-            break;
-        case 504:
-            showErrorAlert("Internal server error. Please try again later.");
-            break;
-        default:
-          showErrorAlert(message || "An error occurred");
-  }
-};
-
 const login = (event) => {
     event.preventDefault();
     errors.value = false;
 
     if (!email.value || !password.value) {
-        showErrorAlert("Please enter both email and password");
+        errors.value = true;
+        resetErrors();
         return;
     }
 
@@ -95,12 +53,7 @@ const login = (event) => {
         })
         .catch((error) => {
             console.error("Error:", error);
-      if (error.status) {
-        handleApiError(error.status, error.statusText);
-      } else {
-        showErrorAlert("Connection error: Please check your internet connection");
-      }
-    });
+        });
 };
 
 const resetErrors = () => {
@@ -110,14 +63,9 @@ const resetErrors = () => {
 };
 
 const callback = (response) => {
-    try {
     console.log("Google OAuth response:", response);
     localStorage.setItem("audemyUserSession", JSON.stringify(response));
     userSession.value = response;
-  } catch (error) {
-    console.error("Error during Google login:", error);
-    showErrorAlert("Failed to process Google login");
-  }
 };
 
 const logout = () => {

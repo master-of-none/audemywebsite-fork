@@ -1,3 +1,7 @@
+const showErrorAlert = (message) => {
+  alert(message); // Using standard alert for simplicity
+};
+
 const submitForm = () => {
   // Get form data
   const form = document.getElementById("signupForm");
@@ -51,28 +55,30 @@ const submitForm = () => {
         case 504:
             showErrorAlert("Internal server error. Please try again later.");
             break;
-        default:
-          alert(`Error: ${response.status}. Please try again later.`);
+            default:
+              showErrorAlert(`Error: ${response.status}. Please try again later.`);
       }
-      return response.json().then(errorData => {
-        console.error('Error details:', errorData);
-        throw new Error(response.status);
-      });
-    }
-    return response.json();
-  })
-  .then(data => {
-    console.log('Success:', data);
-    // You can handle the response here (e.g., show a success message)
-    alert('Signup successful!');
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-    // This will catch network errors or any errors thrown above
-    if (!error.message || !parseInt(error.message)) {
-      alert('Network error. Please check your connection and try again.');
-    }
-  });
+      
+      // Return a rejected promise to skip the next then block
+      return Promise.reject();
+  }
+  return response.json();
+})
+.then(data => {
+  console.log('Success:', data);
+  // You can handle the response here (e.g., show a success message)
+  alert('Signup successful!');
+})
+.catch((error) => {
+  // Only show network errors here - HTTP errors are already handled above
+  if (error) {
+      console.error('Error:', error);
+      if (!error.message || !parseInt(error.message)) {
+          showErrorAlert('Network error. Please check your connection and try again.');
+      }
+  }
+});
 };
+
 // Attach the submit event listener
 document.getElementById('submitBtn').addEventListener('click', submitForm);

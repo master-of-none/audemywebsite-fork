@@ -228,6 +228,11 @@ import Book from "/assets/images/SignUpImg/Group 1106.png";
 import Star from "/assets/images/testimonials/star.svg";
 
 import Cookies from "js-cookie";
+
+const showErrorAlert = (message) => {
+    alert(message); // Using standard alert for simplicity
+};
+
 const submitForm = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
 
@@ -262,31 +267,21 @@ const submitForm = async (event) => {
             }),
         });
 
-        // Check if response is JSON before trying to parse it
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            const errorText = await response.text();
-            console.error("Non-JSON response:", errorText);
-            
-            if (!response.ok) {
-                alert(`Server error: ${response.status}. ${errorText || "No details provided"}`);
-                throw new Error(`Server error: ${response.status}`);
+        if (!response.ok) {
+            // For non-JSON responses, try to get text content
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                const errorText = await response.text();
+                console.error("Non-JSON error response:", errorText);
             }
             
-            console.log("Success with non-JSON response");
-            window.location.href = "/login";
-            return;
-        }
-
-        const data = await response.json();
-
-        if (!response.ok) {
+            // Now handle based on status code
             switch (response.status) {
                 case 400:
-                    showErrorAlert("Bad request: " + (message || "Please check your input"));
+                    showErrorAlert("Bad request: Please check your input");
                     break;
                 case 401:
-                    showErrorAlert("Unauthorized: " + (message || "Invalid credentials"));
+                    showErrorAlert("Unauthorized: Invalid credentials");
                     break;
                 case 403:
                     showErrorAlert("Forbidden: You don't have permission to access this resource");
@@ -313,10 +308,25 @@ const submitForm = async (event) => {
                     showErrorAlert("Internal server error. Please try again later.");
                     break;
                 default:
-                    alert(`Signup error: ${data.error || 'Something went wrong'}`);
+                    // Try to get error message from response if it's JSON
+                    let errorMessage = 'Something went wrong';
+                    if (contentType && contentType.includes("application/json")) {
+                        try {
+                            const data = await response.json();
+                            errorMessage = data.error || errorMessage;
+                        } catch (e) {
+                            console.error("Error parsing JSON:", e);
+                        }
+                    }
+                    alert(`Signup error: ${errorMessage}`);
             }
-            throw new Error("Internal server error. Please try again later.");
+            
+            // Instead of throwing an error, just return to stop execution
+            return;
         }
+
+        // Continue with normal execution if response is OK
+        const data = await response.json();
 
         console.log("Success:", data);
         //! Go To login
@@ -334,8 +344,19 @@ const submitForm = async (event) => {
                 },
             }),
         });
-        const loginData = await loginResponse.json();
+
         if (!loginResponse.ok) {
+            const loginContentType = loginResponse.headers.get("content-type");
+            let loginData;
+            
+            if (loginContentType && loginContentType.includes("application/json")) {
+                try {
+                    loginData = await loginResponse.json();
+                } catch (e) {
+                    console.error("Error parsing login JSON:", e);
+                }
+            }
+            
             switch (loginResponse.status) {
                 case 400:
                     alert('Invalid login request. Please check your information.');
@@ -349,7 +370,7 @@ const submitForm = async (event) => {
                 case 429:
                     alert('Too many login attempts. Please try again later.');
                     break;
-                    case 500:
+                case 500:
                     showErrorAlert("Internal server error. Please try again later.");
                     break;
                 case 502:
@@ -362,10 +383,14 @@ const submitForm = async (event) => {
                     showErrorAlert("Internal server error. Please try again later.");
                     break;
                 default:
-                    alert(`Login error: ${loginData.error || 'Something went wrong'}`);
+                    alert(`Login error: ${(loginData && loginData.error) || 'Something went wrong'}`);
             }
-            throw new Error(loginData.error || "Something went wrong");
+            
+            // Return without throwing error to prevent dual alerts
+            return;
         }
+
+        const loginData = await loginResponse.json();
         console.log("Login Successful", loginData);
 
         if (loginData.token) {
@@ -375,17 +400,15 @@ const submitForm = async (event) => {
             });
             window.location.href = "/game-zone";
         } else {
-            throw new Error("Token not found");
+            showErrorAlert("Token not found");
+            return;
         }
         signupForm.value?.reset?.();
 
-        // Handle success (e.g., redirect, show success message)
     } catch (error) {
         console.error("Error:", error.message);
-        // Handle error (e.g., show error message to the user)
-        if (!error.message.includes("Something went wrong")) {
-            alert(`Error: ${error.message}`);
-        }
+        // Only show error alert if it hasn't been shown by the code above
+        showErrorAlert(`Error: ${error.message}`);
     }
 };
 

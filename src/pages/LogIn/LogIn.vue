@@ -51,13 +51,10 @@
                 <div class="w-[70%] max-w-[450px]">
                     <div class="mt-8 mb-3" v-if="errors">
                         <div
-                            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
                             role="alert"
                         >
-                            <span class="block sm:inline text-center"
-                                >Invalid email and password combination. Try
-                                again!</span
-                            >
+                            {{ errorMessage }}
                         </div>
                     </div>
                     <div class="mb-[16px]">
@@ -267,8 +264,9 @@ const handleApiError = (status, message) => {
             showErrorAlert("Internal server error. Please try again later.");
             break;
         default:
-            showErrorAlert(message || "An error occurred");
-    }
+            // Handle other errors
+            showErrorAlert('Unexpected error occurred.');
+        }
 };
 
 const resetErrors = () => {
@@ -304,12 +302,14 @@ const login = async (event) => {
         if (!contentType || !contentType.includes("application/json")) {
             const errorText = await response.text();
             console.error("Non-JSON response:", errorText);
-            
+
             if (!response.ok) {
-                alert(`Server error: ${response.status}. ${errorText || "No details provided"}`);
-                throw new Error(`Server error: ${response.status}`);
+                console.log("response not okay")
+                handleApiError(response.status, errorText || "No details provided");
+                console.log("alert message displayed")
+                return;
             }
-            
+
             console.log("Success with non-JSON response");
             window.location.href = "/login";
             return;
@@ -319,7 +319,6 @@ const login = async (event) => {
         // console.log("Response Data:", data);
 
         if (!response.ok) {
-            const data = await response.json().catch(() => ({}));
             handleApiError(response.status, data.message || "Failed to login");
             return;
         }

@@ -19,6 +19,11 @@ onMounted(() => {
     }
 });
 
+const showErrorAlert = (message) => {
+    errors.value = true;
+    errorMessage.value = message;
+};
+
 const handleApiError = (status, message) => {
     switch(status) {
         case 400:
@@ -106,7 +111,6 @@ const resetConfirm = async (event) => {
             // Throw error and set the flag to true to display the error message on the frontend
             console.error("Error: ", error);
             errorMessage.value = "Connection error: Please check your internet connection and try again";
-            errors.value = true;
         }
     }
 };

@@ -7,6 +7,10 @@ const errors = ref(false);      // flag to display error on frontend
 const email = ref("");          // email input field value
 const router = useRouter();
 
+const showErrorAlert = (message) => {
+    alert(message); // Using standard alert for simplicity
+};
+
 const sendResetEmail = async (event) => {
     // prevent default form submission which would reload the page
     event.preventDefault();     
@@ -32,10 +36,10 @@ const sendResetEmail = async (event) => {
         if (!emailResponse.ok) {
             switch (emailResponse.status) {
                 case 400:
-                    showErrorAlert("Bad request: " + (message || "Please check your input"));
+                    showErrorAlert("Bad request: Please check your input");
                     break;
                 case 401:
-                    showErrorAlert("Unauthorized: " + (message || "Invalid credentials"));
+                    showErrorAlert("Unauthorized: Invalid credentials");
                     break;
                 case 403:
                     showErrorAlert("Forbidden: You don't have permission to access this resource");
@@ -64,8 +68,10 @@ const sendResetEmail = async (event) => {
                 default:
                     // Handle other errors
                     alert('Unexpected error occurred.');
-                }
-            } else {
+            }
+            // Return to prevent further execution
+            return;
+        } else {
             // Route to reset-link-sent page if email sent successfully
             console.log("Email sent successfully.");
             router.push("/reset-link-sent");
