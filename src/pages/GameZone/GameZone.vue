@@ -267,7 +267,7 @@ function hideMenuDropdown(menuBtn, currentDropdown) {
                       'w-full items-center justify-center gap-2 font-poppins text-[#6E777C] bg-[#FFFFFF] font-normal border border-[#6E777C] mobile:text-[14px] py-2 px-8 rounded-full'
                     ]"
             >
-              <span>Menu</span>
+              <span>Game Menu</span>
                 <svg class="inline size-5 text-gray-400 fill-[#6E777C]" 
                       viewBox="0 0 20 20" 
                       fill="currentColor" 
@@ -341,7 +341,7 @@ function hideMenuDropdown(menuBtn, currentDropdown) {
                       'w-full items-center justify-center gap-2 font-poppins text-[#6E777C] bg-[#FFFFFF] font-normal border border-[#6E777C] mobile:text-[14px] py-2 px-8 rounded-full'
                     ]"
             >
-              <span>Menu</span>
+              <span>Game Menu</span>
                 <svg class="size-5 text-gray-400" 
                       viewBox="0 0 20 20" 
                       fill="currentColor" 
