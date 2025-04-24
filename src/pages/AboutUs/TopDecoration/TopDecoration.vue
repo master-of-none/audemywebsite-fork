@@ -11,7 +11,7 @@
         />
         <img
             src="/assets/images/about-us/Group 1206.png"
-            class="absolute top-[10rem] -z-10"
+            class="absolute top-[10rem] -z-10 rotate-45"
             alt="Background image"
         />
     </div>
