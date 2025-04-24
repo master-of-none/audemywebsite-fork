@@ -10,34 +10,6 @@ const changeCurrentPage = (page) => {
 };
 
 const schools = [
-    // {
-    //     name: "California School for the Blind",
-    //     link: "https://www.csb-cde.ca.gov/",
-    // },
-    // {
-    //     name: "Texas School for the Blind and Visually Impaired",
-    //     link: "https://www.tsbvi.edu/",
-    // },
-    // {
-    //     name: "Kansas School for the Blind",
-    //     link: "https://kssb.net/",
-    // },
-    // {
-    //     name: "Illinois School for the Visually Impaired",
-    //     link: "https://www.dhs.state.il.us/page.aspx?item=84503",
-    // },
-    // {
-    //     name: "Arizona State School for the Deaf and the Blind",
-    //     link: "https://asdb.az.gov/",
-    // },
-    // {
-    //     name: "Obra D. Tompkins High School",
-    //     link: "https://www.katyisd.org/tompkins",
-    // },
-    // {
-    //     name: "HeZe Special Education Center (菏泽市特殊教育中心)",
-    //     link: "http://www.hzstjzx.cn/",
-    // },
     {
         name: "Alabama Institute for the Deaf and Blind",
         link: "https://www.aidb.org",

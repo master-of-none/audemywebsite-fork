@@ -35,11 +35,11 @@ export default {
           },
           {
             name: "Florida School for the Deaf and the Blind",
-            coordinates: [-121.965, 37.561389],
+            coordinates: [-81.31568, 29.91387],
           },
           {
             name: "Georgia Academy for the Blind",
-            coordinates: [-83.6387611, 32.8388194],
+            coordinates: [-83.6686, 32.8481],
           },
           {
             name: "Hadley (IL)",
@@ -47,19 +47,19 @@ export default {
           },
           {
             name: "Idaho Educational Services for the Deaf and the Blind",
-            coordinates: [],
+            coordinates: [-114.71018377937226, 42.930033266556364],
           },
           {
             name: "Illinois School for the Visually Impaired",
-            coordinates: [],
+            coordinates: [-90.21798754611584, 39.73565543633133],
           },
           {
             name: "Indiana School for the Blind and Visually Impaired",
-            coordinates: [],
+            coordinates: [-86.08515046145114, 39.83401516509762],
           },
           {
             name: "Iowa Educational Services for the Blind and Visually Impaired",
-            coordinates: [],
+            coordinates: [-95.82260501904825, 41.22588929543891],
           },
           {
             name: "Kansas State School for the Blind",
@@ -87,11 +87,11 @@ export default {
           },
           {
             name: "Vermont Association for the Blind and Visually Impaired",
-            coordinates: [-73.212074, 44.475883],
+            coordinates: [-73.150000, 44.466667],
           },
           {
             name: "Visually Impaired Preschool Services (KY + IN)",
-            coordinates: [],
+            coordinates: [-85.68384087502888, 38.20048802883136],
           },
         ];
 
