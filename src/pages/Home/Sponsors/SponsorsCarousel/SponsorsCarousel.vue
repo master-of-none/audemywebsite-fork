@@ -10,6 +10,7 @@ const items = [
     "/assets/images/sponsors/intel.svg",
     "/assets/images/sponsors/hersheys.svg",
     "/assets/images/sponsors/k4c.svg",
+    "/assets/images/sponsors/ncwit.png",
 ];
 
 let interval;
