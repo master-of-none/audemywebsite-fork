@@ -63,6 +63,7 @@ onUnmounted(() => {
   >
     <Header :logoPath="'/assets/images/header/header-logo-2.png'" />
     <Hero />
+    <Impact />
   </div>
   <div 
     :class="[
@@ -71,9 +72,8 @@ onUnmounted(() => {
       isMobile ? 'px-5 mt-20' : ''
     ]"
   >
-    <AboutUs />
     <Sponsors />
-    <Impact />
+    <TechShowcase />
   </div>
   <Testimonials />
   <div 
@@ -83,9 +83,7 @@ onUnmounted(() => {
       isMobile ? 'px-5' : ''
     ]"
   >
-    <TechShowcase />
     <Events />
-    <CTA />
   </div>
   <Footer />
 </template>
